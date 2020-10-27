@@ -118,77 +118,77 @@ function wemessage_fix_files_page(){?>
         }
         
         function deleteFiles(length=0){
-        	var ids = Array();
-        	if(length == 0){
-        		jQuery('.deleting').show();
-        		jQuery('.files').hide();
-        		jQuery('#files .progress').width('0%');
-        		length = jQuery('#foundfiles .notFound').length;
-        	}
-        	
+            var ids = Array();
+            if(length == 0){
+                jQuery('.deleting').show();
+                jQuery('.files').hide();
+                jQuery('#files .progress').width('0%');
+                length = jQuery('#foundfiles .notFound').length;
+            }
+            
             jQuery('#foundfiles .notFound.record').each(function(){
                 ids.push(jQuery(this).data('id'));
             });
-			if(ids.length){
-				var ar = ids.splice(0, 10);
-				jQuery.ajax({
-					type: "POST",
-					url: ajaxurl,
-					data: {
-						'action': 'fc_fc_delete_records',
-						'ids': ar
-					},
-					success: function(data){
+            if(ids.length){
+                var ar = ids.splice(0, 10);
+                jQuery.ajax({
+                    type: "POST",
+                    url: ajaxurl,
+                    data: {
+                        'action': 'fc_fc_delete_records',
+                        'ids': ar
+                    },
+                    success: function(data){
 
-					}
-				}).done(function(data, textStatus, jqXHR){
-					var x = ((length - jQuery('#foundfiles .notFound').length) * 100) / length;
+                    }
+                }).done(function(data, textStatus, jqXHR){
+                    var x = ((length - jQuery('#foundfiles .notFound').length) * 100) / length;
                     jQuery('#files .progress').width(x+'%');
                     jQuery(ar).each(function(i,v){
                     jQuery('#foundfiles .notFound').filter(function(){
-                        	return jQuery(this).data('id') === v
-                    	}).remove();
-                	});
-                	jQuery('.deleting .amount').text(jQuery('#foundfiles .notFound').length);
-                	jQuery('.deleting .from').text(jQuery('.files .amount').text());
-					deleteFiles(length);
-				});
-			} else {
-				jQuery('#foundfiles .notFound.file').each(function(){
-					ids.push(jQuery(this).data('id'));
-				});
-				if(ids.length){
-					var ar = ids.splice(0, 10);
-					jQuery.ajax({
-						type: "POST",
-						url: ajaxurl,
-						data: {
-							'action': 'fc_fc_delete_files',
-							'files': ar
-						},
-						success: function(data){
-					
-						}
-					}).done(function(data, textStatus, jqXHR){
-						var x = ((length - jQuery('#foundfiles .notFound').length) * 100) / length;
-                    	jQuery('#files .progress').width(x+'%');
-                    	jQuery(ar).each(function(i,v){
-                    	jQuery('#foundfiles .notFound').filter(function(){
-                        		return jQuery(this).data('id') === v
-                    		}).remove();
-                		});
-                		jQuery('.deleting .amount').text(jQuery('#foundfiles .notFound').length);
-                		jQuery('.deleting .from').text(jQuery('.files .amount').text());
-						deleteFiles(length);
-					});
-				} else {
-					jQuery('#foundfiles').html('');
-					jQuery('.deleting').hide();
-					jQuery('.files .amount').text(0);
-        			jQuery('.files').show();
-        			jQuery('#files').hide();
-        			jQuery('#files .progress').width('0%');
-				}
+                            return jQuery(this).data('id') === v
+                        }).remove();
+                    });
+                    jQuery('.deleting .amount').text(jQuery('#foundfiles .notFound').length);
+                    jQuery('.deleting .from').text(jQuery('.files .amount').text());
+                    deleteFiles(length);
+                });
+            } else {
+                jQuery('#foundfiles .notFound.file').each(function(){
+                    ids.push(jQuery(this).data('id'));
+                });
+                if(ids.length){
+                    var ar = ids.splice(0, 10);
+                    jQuery.ajax({
+                        type: "POST",
+                        url: ajaxurl,
+                        data: {
+                            'action': 'fc_fc_delete_files',
+                            'files': ar
+                        },
+                        success: function(data){
+                    
+                        }
+                    }).done(function(data, textStatus, jqXHR){
+                        var x = ((length - jQuery('#foundfiles .notFound').length) * 100) / length;
+                        jQuery('#files .progress').width(x+'%');
+                        jQuery(ar).each(function(i,v){
+                        jQuery('#foundfiles .notFound').filter(function(){
+                                return jQuery(this).data('id') === v
+                            }).remove();
+                        });
+                        jQuery('.deleting .amount').text(jQuery('#foundfiles .notFound').length);
+                        jQuery('.deleting .from').text(jQuery('.files .amount').text());
+                        deleteFiles(length);
+                    });
+                } else {
+                    jQuery('#foundfiles').html('');
+                    jQuery('.deleting').hide();
+                    jQuery('.files .amount').text(0);
+                    jQuery('.files').show();
+                    jQuery('#files').hide();
+                    jQuery('#files .progress').width('0%');
+                }
             }
         }
     </script>
@@ -203,12 +203,12 @@ function fc_check_files() {
     $it = new RecursiveDirectoryIterator($media['basedir']);
                 
     foreach(new RecursiveIteratorIterator($it) as $file){
-    	if($file->getFilename() == '.' || $file->getFilename() == '..') continue;
-    	// skip file which matches filename-reolution
-    	$fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-    	$resolution = substr($fileName, -3);
-    	if($resolution == filter_var($resolution, FILTER_VALIDATE_INT)) continue;
-    	$results[] = array('path'=>$file->getPathname(), 'name'=>$file->getFilename());
+        if($file->getFilename() == '.' || $file->getFilename() == '..') continue;
+        // skip file which matches filename-reolution
+        $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
+        $resolution = substr($fileName, -3);
+        if($resolution == filter_var($resolution, FILTER_VALIDATE_INT)) continue;
+        $results[] = array('path'=>$file->getPathname(), 'name'=>$file->getFilename());
     }
     echo json_encode($results);
     wp_die();
@@ -218,21 +218,21 @@ add_action( 'wp_ajax_fc_process_files', 'fc_process_files' );
 function fc_process_files() {
     global $wpdb;
     foreach($_POST['files'] as $file){
-    	$results = $wpdb->get_results('select * from '.$wpdb->postmeta.' where meta_key="_wp_attached_file" and meta_value like "%'.pathinfo($file['name'], PATHINFO_FILENAME).'%"');
-    	if(count($results)){
-    		foreach($results as $result){
-    			if(!$wpdb->get_var('select post_parent from '.$wpdb->posts.' where ID='.$result->post_id)){
-    				$res = $wpdb->get_results('select * from '.$wpdb->posts.' where post_content like "%'.pathinfo($file['name'], PATHINFO_FILENAME).'%"');
-    				if(!count($res)){
-    					$media = wp_upload_dir();
-    					echo '<p class="notFound record" style="padding:5px; border:1px solid; background:#fff;width:calc(100% - 12px); display:inline-block;" data-id="'.$result->post_id.'"><img src="'.$media['baseurl'].'/'.$result->meta_value.'" width="40" style="margin-right:10px;" />'.sprintf(__('Image %s was not attached to a post', 'wemessage_fix_files'), '<b>'.$result->meta_value.'</b>').'<span class="button button-secondary pull-right" onclik="deleteRecord(this)">'.__('Delete', 'wemessage_fix_files').'</span></p>';
-    				}
-    			}
-    		}
-    	} else {
-    		$res = $wpdb->get_results('select * from '.$wpdb->posts.' where post_content like "%'.pathinfo($file['name'], PATHINFO_FILENAME).'%"');
-    		if(!count($res)) echo '<p class="notFound file" style="padding:5px; border:1px solid; background:#eee; width:calc(100% - 12px); display:inline-block;" data-id="'.$file['name'].'">'.sprintf(__('File %s was not found in database', 'wemessage_fix_files'),'<b>'.$file['name'].'</b>').'<span class="button button-secondary pull-right" onclik="deleteFile(this)">'.__('Delete', 'wemessage_fix_files').'</p>';
-    	}
+        $results = $wpdb->get_results('select * from '.$wpdb->postmeta.' where meta_key="_wp_attached_file" and meta_value like "%'.pathinfo($file['name'], PATHINFO_FILENAME).'%"');
+        if(count($results)){
+            foreach($results as $result){
+                if(!$wpdb->get_var('select post_parent from '.$wpdb->posts.' where ID='.$result->post_id)){
+                    $res = $wpdb->get_results('select * from '.$wpdb->posts.' where post_content like "%'.pathinfo($file['name'], PATHINFO_FILENAME).'%"');
+                    if(!count($res)){
+                        $media = wp_upload_dir();
+                        echo '<p class="notFound record" style="padding:5px; border:1px solid; background:#fff;width:calc(100% - 12px); display:inline-block;" data-id="'.$result->post_id.'"><img src="'.$media['baseurl'].'/'.$result->meta_value.'" width="40" style="margin-right:10px;" />'.sprintf(__('Image %s was not attached to a post', 'wemessage_fix_files'), '<b>'.$result->meta_value.'</b>').'<span class="button button-secondary pull-right" onclik="deleteRecord(this)">'.__('Delete', 'wemessage_fix_files').'</span></p>';
+                    }
+                }
+            }
+        } else {
+            $res = $wpdb->get_results('select * from '.$wpdb->posts.' where post_content like "%'.pathinfo($file['name'], PATHINFO_FILENAME).'%"');
+            if(!count($res)) echo '<p class="notFound file" style="padding:5px; border:1px solid; background:#eee; width:calc(100% - 12px); display:inline-block;" data-id="'.$file['name'].'">'.sprintf(__('File %s was not found in database', 'wemessage_fix_files'),'<b>'.$file['name'].'</b>').'<span class="button button-secondary pull-right" onclik="deleteFile(this)">'.__('Delete', 'wemessage_fix_files').'</p>';
+        }
     }
     wp_die();
 }
@@ -248,8 +248,8 @@ function fc_fc_delete_records() {
                 unlink($file->getPathname());
             }
             $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-    		$resolution = substr($fileName, -3);
-    		if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $result->meta_value) !== false) unlink($file->getPathname());
+            $resolution = substr($fileName, -3);
+            if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $result->meta_value) !== false) unlink($file->getPathname());
         }
     }
     $wpdb->query('delete from '.$wpdb->postmeta.' where post_id in ('.implode(',',$_POST['ids']).')');
@@ -266,8 +266,8 @@ function fc_fc_delete_files() {
                 unlink($file->getPathname());
             }
             $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-    		$resolution = substr($fileName, -3);
-    		if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $dfile) !== false) unlink($file->getPathname());
+            $resolution = substr($fileName, -3);
+            if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $dfile) !== false) unlink($file->getPathname());
         }
     }
     wp_die();
@@ -285,8 +285,8 @@ function fc_delete_record() {
                 unlink($file->getPathname());
             }
             $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-    		$resolution = substr($fileName, -3);
-    		if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $result->meta_value) !== false) unlink($file->getPathname());
+            $resolution = substr($fileName, -3);
+            if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $result->meta_value) !== false) unlink($file->getPathname());
         }
     }
     $wpdb->query('delete from '.$wpdb->postmeta.' where post_id='.$_POST['id']);
@@ -304,8 +304,8 @@ function fc_delete_file() {
             unlink($file->getPathname());
         }
         $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-    	$resolution = substr($fileName, -3);
-    	if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $_POST['file']) !== false) unlink($file->getPathname());
+        $resolution = substr($fileName, -3);
+        if($resolution == filter_var($resolution, FILTER_VALIDATE_INT) && strpos($file->getFilename(), $_POST['file']) !== false) unlink($file->getPathname());
     }
     wp_die();
 }
